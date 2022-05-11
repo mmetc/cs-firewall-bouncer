@@ -11,17 +11,18 @@
 &#128172; <a href="https://discourse.crowdsec.net">Discourse </a>
 </p>
 
-
 # crowdsec-firewall-bouncer
+
 Crowdsec bouncer written in golang for firewalls.
 
 crowdsec-firewall-bouncer will fetch new and old decisions from a CrowdSec API to add them in a blocklist used by supported firewalls.
 
 Supported firewalls:
- - iptables (IPv4 :heavy_check_mark: / IPv6 :heavy_check_mark: )
- - nftables (IPv4 :heavy_check_mark: / IPv6 :heavy_check_mark: )
- - ipset only (IPv4 :heavy_check_mark: / IPv6 :heavy_check_mark: )
- - pf (IPV4 :heavy_check_mark: / IPV6 :heavy_check_mark: )
+
+- iptables (IPv4 :heavy_check_mark: / IPv6 :heavy_check_mark: )
+- nftables (IPv4 :heavy_check_mark: / IPv6 :heavy_check_mark: )
+- ipset only (IPv4 :heavy_check_mark: / IPv6 :heavy_check_mark: )
+- pf (IPV4 :heavy_check_mark: / IPV6 :heavy_check_mark: )
 
 # Installation
 

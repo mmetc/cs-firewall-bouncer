@@ -120,13 +120,17 @@ class TestIPTables(unittest.TestCase):
         sleep(3)
 
         set_elements = get_set_elements(SET_NAME_IPV4)
-        self.assertEqual({i["value"] for i in decisions if i["value"] != "0.0.0.0"}, set_elements)
+        self.assertEqual(
+            {i["value"] for i in decisions if i["value"] != "0.0.0.0"}, set_elements
+        )
         self.assertEqual(len(set_elements), total_decisions - duplicate_decisions - 1)
         self.assertNotIn("0.0.0.0", set_elements)
 
     def test_decision_insertion_deletion_ipv6(self):
         total_decisions, duplicate_decisions = 100, 23
-        decisions = generate_n_decisions(total_decisions, dup_count=duplicate_decisions, ipv4=False)
+        decisions = generate_n_decisions(
+            total_decisions, dup_count=duplicate_decisions, ipv4=False
+        )
         self.lapi.ds.insert_decisions(decisions)
         sleep(3)
 

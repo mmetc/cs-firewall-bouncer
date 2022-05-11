@@ -6,11 +6,11 @@ LOG_FILE="/var/log/crowdsec-firewall-bouncer.log"
 SYSTEMD_PATH_FILE="/etc/systemd/system/crowdsec-firewall-bouncer.service"
 
 uninstall() {
-	systemctl stop crowdsec-firewall-bouncer
-	rm -rf "${CONFIG_DIR}"
-	rm -f "${SYSTEMD_PATH_FILE}"
-	rm -f "${BIN_PATH_INSTALLED}"
-	rm -f "${LOG_FILE}"
+    systemctl stop crowdsec-firewall-bouncer
+    rm -rf "${CONFIG_DIR}"
+    rm -f "${SYSTEMD_PATH_FILE}"
+    rm -f "${BIN_PATH_INSTALLED}"
+    rm -f "${LOG_FILE}"
 }
 
 uninstall

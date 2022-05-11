@@ -71,24 +71,31 @@ class TestNFTables(unittest.TestCase):
         d1, d2, d3 = generate_n_decisions(3, dup_count=1)
         self.lapi.ds.insert_decisions([d1])
         sleep(1)
-        self.assertEqual(get_set_elements("ip", "crowdsec", "crowdsec-blacklists"), {"0.0.0.0"})
+        self.assertEqual(
+            get_set_elements("ip", "crowdsec", "crowdsec-blacklists"), {"0.0.0.0"}
+        )
 
         self.lapi.ds.insert_decisions([d2, d3])
         sleep(1)
         assert self.fb.poll() is None
         self.assertEqual(
-            get_set_elements("ip", "crowdsec", "crowdsec-blacklists"), {"0.0.0.0", "0.0.0.1"}
+            get_set_elements("ip", "crowdsec", "crowdsec-blacklists"),
+            {"0.0.0.0", "0.0.0.1"},
         )
 
         self.lapi.ds.delete_decision_by_id(d1["id"])
         self.lapi.ds.delete_decision_by_id(d2["id"])
         sleep(1)
-        self.assertEqual(get_set_elements("ip", "crowdsec", "crowdsec-blacklists"), set())
+        self.assertEqual(
+            get_set_elements("ip", "crowdsec", "crowdsec-blacklists"), set()
+        )
         assert self.fb.poll() is None
 
         self.lapi.ds.delete_decision_by_id(d3["id"])
         sleep(1)
-        self.assertEqual(get_set_elements("ip", "crowdsec", "crowdsec-blacklists"), set())
+        self.assertEqual(
+            get_set_elements("ip", "crowdsec", "crowdsec-blacklists"), set()
+        )
         assert self.fb.poll() is None
 
     def test_decision_insertion_deletion_ipv4(self):
@@ -106,13 +113,17 @@ class TestNFTables(unittest.TestCase):
         sleep(1)
 
         set_elements = get_set_elements("ip", "crowdsec", "crowdsec-blacklists")
-        assert {i["value"] for i in decisions if i["value"] != "0.0.0.0"} == set_elements
+        assert {
+            i["value"] for i in decisions if i["value"] != "0.0.0.0"
+        } == set_elements
         assert len(set_elements) == total_decisions - duplicate_decisions - 1
         assert "0.0.0.0" not in set_elements
 
     def test_decision_insertion_deletion_ipv6(self):
         total_decisions, duplicate_decisions = 100, 23
-        decisions = generate_n_decisions(total_decisions, dup_count=duplicate_decisions, ipv4=False)
+        decisions = generate_n_decisions(
+            total_decisions, dup_count=duplicate_decisions, ipv4=False
+        )
         self.lapi.ds.insert_decisions(decisions)
         sleep(1)
 
@@ -151,7 +162,9 @@ class TestNFTables(unittest.TestCase):
         ]
         self.lapi.ds.insert_decisions(decisions)
         sleep(1)
-        elems = get_set_elements("ip", "crowdsec", "crowdsec-blacklists", with_timeout=True)
+        elems = get_set_elements(
+            "ip", "crowdsec", "crowdsec-blacklists", with_timeout=True
+        )
         assert len(elems) == 1
         elems = list(elems)
         assert elems[0][0] == "123.45.67.12"
@@ -159,7 +172,9 @@ class TestNFTables(unittest.TestCase):
 
 
 def get_set_elements(family, table_name, set_name, with_timeout=False):
-    output = json.loads(run_cmd("nft", "-j", "list", "set", family, table_name, set_name))
+    output = json.loads(
+        run_cmd("nft", "-j", "list", "set", family, table_name, set_name)
+    )
     for node in output["nftables"]:
         if "set" not in node or "elem" not in node["set"]:
             continue
@@ -168,5 +183,8 @@ def get_set_elements(family, table_name, set_name, with_timeout=False):
         else:
             if not with_timeout:
                 return {elem["elem"]["val"] for elem in node["set"]["elem"]}
-            return {(elem["elem"]["val"], elem["elem"]["timeout"]) for elem in node["set"]["elem"]}
+            return {
+                (elem["elem"]["val"], elem["elem"]["timeout"])
+                for elem in node["set"]["elem"]
+            }
     return set()

@@ -6,7 +6,9 @@ from typing import List
 def run_cmd(*cmd, ignore_error=False):
     p = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
     if not ignore_error and p.returncode:
-        raise SystemExit(f"{cmd} exited with non-zero code with following logs:\n {p.stdout}")
+        raise SystemExit(
+            f"{cmd} exited with non-zero code with following logs:\n {p.stdout}"
+        )
 
     return p.stdout
 
@@ -21,7 +23,7 @@ def generate_n_decisions(n: int, action="ban", dup_count=0, ipv4=True, duration=
         if ipv4:
             ip = ip_address(i)
         else:
-            ip = ip_address(2 ** 32 + i)
+            ip = ip_address(2**32 + i)
         decisions.append(
             {
                 "value": ip.__str__(),

@@ -38,5 +38,5 @@ func (nativeEndian) PutUint64(b []byte, v uint64) {
 	*(*uint64)(unsafe.Pointer(&b[0])) = v
 }
 
-func (nativeEndian) String() string { return "NativeEndian" }
+func (nativeEndian) String() string   { return "NativeEndian" }
 func (nativeEndian) GoString() string { return "natend.NativeEndian" }

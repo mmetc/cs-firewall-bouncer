@@ -10,7 +10,6 @@ upgrade_bin() {
     install -v -m 755 -D "${BIN_PATH}" "${BIN_PATH_INSTALLED}"
 }
 
-
 log_err() {
     msg=$1
     date=$(date +%x:%X)
