@@ -1,0 +1,30 @@
+# https://github.com/trunk-io/trunk-action
+
+name: trunk-lint
+on:
+  push:
+    tags:
+      - v*
+    branches:
+      - main
+      - testing
+  pull_request:
+permissions:
+  contents: read
+  # Optional: allow read access to pull request. Use with `only-new-issues` option.
+  # pull-requests: read
+jobs:
+  trunk:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go 1.17
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.17
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Trunk Check
+        uses: trunk-io/trunk-action@v1
