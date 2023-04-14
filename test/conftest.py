@@ -3,30 +3,34 @@ Full integration test with a real Crowdsec running in Docker
 """
 
 import contextlib
-import os
-import pathlib
-
 import pytest
 
-SCRIPT_DIR = pathlib.Path(os.path.dirname(os.path.realpath(__file__)))
-PROJECT_ROOT = SCRIPT_DIR.parent
-fw_binary = PROJECT_ROOT.joinpath("crowdsec-firewall-bouncer")
-bouncer_binary = fw_binary
+
+def pytest_configure(config):
+    config.addinivalue_line(
+        'markers', 'deb: tests for build/install/configure a debian packages'
+    )
+    config.addinivalue_line(
+        'markers', 'rpm: tests for build/install/configure rpm packages'
+    )
+    config.addinivalue_line(
+        'markers', 'iptables: tests iptables (requires root)'
+    )
+    config.addinivalue_line(
+        'markers', 'nftables: tests nftables (requires root)'
+    )
 
 
-@pytest.hookimpl(tryfirst=True, hookwrapper=True)
-def pytest_sessionstart(session):
-    if not bouncer_binary.exists() or not os.access(bouncer_binary, os.X_OK):
-        raise RuntimeError(f"Bouncer binary not found at {bouncer_binary}. Did you build it?")
-
-    yield
-
-
-# Create a lapi container, registers a bouncer
-# and runs it with the updated config.
-# - Returns context manager that yields a tuple of (bouncer, lapi)
+# provide the name of the bouncer binary to test
 @pytest.fixture(scope='session')
-def bouncer_with_lapi(bouncer, crowdsec, fw_cfg_factory, api_key_factory, tmp_path_factory):
+def bouncer_under_test():
+    return 'crowdsec-firewall-bouncer'
+
+
+# Create a lapi container, register a bouncer and run it with the updated config.
+# - Return context manager that yields a tuple of (bouncer, lapi)
+@pytest.fixture(scope='session')
+def bouncer_with_lapi(bouncer, crowdsec, fw_cfg_factory, api_key_factory, tmp_path_factory, bouncer_binary):
     @contextlib.contextmanager
     def closure(config_lapi=None, config_bouncer=None, api_key=None):
         if config_bouncer is None:
@@ -48,7 +52,7 @@ def bouncer_with_lapi(bouncer, crowdsec, fw_cfg_factory, api_key_factory, tmp_pa
                 cfg['api_url'] = f'http://localhost:{port}/'
                 cfg['api_key'] = api_key
                 cfg.update(config_bouncer)
-                with bouncer(fw_binary, cfg) as cb:
+                with bouncer(bouncer_binary, cfg) as cb:
                     yield cb, lapi
         finally:
             pass
