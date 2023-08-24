@@ -31,11 +31,13 @@ jobs:
 
     - name: Build all versions
       run: |
-        make vendor platform-all
+        # build platform-all first so the vendor file is not removed
+        make platform-all vendor
 
     - name: Upload to release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         tag_name="${GITHUB_REF##*/}"
-        hub release edit $(find . -name "$PROGRAM_NAME*" -maxdepth 1 -printf "-a %p ") -a vendor.tgz -a *-vendor.tar.xz -m "" "$tag_name"
+        # this should find the $PROGRAM_NAME-vendor.tar.xz file as well
+        hub release edit $(find . -name "$PROGRAM_NAME*" -maxdepth 1 -printf "-a %p ") -a vendor.tgz -m "" "$tag_name"
